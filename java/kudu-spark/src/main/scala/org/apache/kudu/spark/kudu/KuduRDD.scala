@@ -79,6 +79,7 @@ class KuduRDD private[kudu] (val kuduContext: KuduContext,
     val client: KuduClient = kuduContext.syncClient
     val partition: KuduPartition = part.asInstanceOf[KuduPartition]
     val scanner = KuduScanToken.deserializeIntoScanner(partition.scanToken, client)
+    taskContext.addTaskCompletionListener{ _ => scanner.close() }
     new RowIterator(scanner, kuduContext)
   }
 
